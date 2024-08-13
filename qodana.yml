@@ -5,19 +5,28 @@ profile:
 
 bootstrap: |
   sudo apt-get update
+  sudo apt-get purge -y libclang*
   sudo apt-get install -y cmake git unzip build-essential ca-certificates curl zip unzip tar pkg-config ninja-build autoconf automake libtool python3
+  sudo apt list --installed
   cd ~
   git clone https://github.com/Microsoft/vcpkg.git
   cd vcpkg
+  git checkout 095ee06e7f60dceef7d713e3f8b1c2eb10d650d7
   ./bootstrap-vcpkg.sh
   cd /data/project
   rm -rf build
   mkdir -p build
   cd build
-  CMAKE_CC_COMPILER=cc export CMAKE_CXX_COMPILER=c++ cmake -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake .. --preset linux-debug || true
-  ls ./linux-debug/compile_commands.json
-  cat ./linux-debug/compile_commands.json
-  cat /data/project/logs/*
+  export CC=/usr/bin/cc
+  export CXX=/usr/bin/c++
+  cmake -DCMAKE_TOOLCHAIN_FILE=~/vcpkg/scripts/buildsystems/vcpkg.cmake .. --preset linux-debug || true
+  sudo apt-get install -y clang-16* clang-format-16* clang-tidy-16* clang-tools-16* libclang*
+
+
+
+# cat /home/qodana/vcpkg/buildtrees/abseil/install-x64-linux-dbg-out.log
+# cat ./linux-debug/compile_commands.json
+# cat ./logs/*
 
 
 include:
